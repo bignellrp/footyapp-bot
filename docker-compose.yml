@@ -1,8 +1,10 @@
 version: '3.8'
 
 services:
-
-  bot:
-    build: .
-    env_file:
-      - .env
+  footyapp-bot:
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
