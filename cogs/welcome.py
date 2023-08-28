@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-#import services.post_spread as post
 
 class Welcome(commands.Cog):
     def __init__(self, bot):

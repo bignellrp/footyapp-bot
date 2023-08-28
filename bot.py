@@ -1,7 +1,7 @@
-import os
 import discord
 import discord.ext.commands as commands
 from dotenv import load_dotenv
+import os
 
 ##Load our environment variables
 load_dotenv()

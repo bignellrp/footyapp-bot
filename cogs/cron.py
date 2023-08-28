@@ -1,9 +1,13 @@
 from discord.ext import commands
-from services.lookup import lookup
 import aiocron
-from services.post_spread import wipe_tally
+from services.post_player_data import wipe_tally
 from services.get_oscommand import GITBRANCH, IFBRANCH
 from bot import bot
+from dotenv import load_dotenv
+import os
+
+##Load our environment variables
+load_dotenv()
 
 class Cron(commands.Cog):
 
@@ -14,9 +18,9 @@ class Cron(commands.Cog):
     @commands.Cog.listener()
     async def cronmsg():
         if  IFBRANCH in GITBRANCH:
-            CHANNEL_ID = lookup("channel_id")
+            CHANNEL_ID = os.getenv("CHANNEL_ID")
         else:
-            CHANNEL_ID = lookup("channel_id_dev")
+            CHANNEL_ID = os.getenv("CHANNEL_ID_DEV")
         CHANNEL_ID = int(CHANNEL_ID)
         channel = bot.get_channel(CHANNEL_ID)
         wipe_tally()

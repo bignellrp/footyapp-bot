@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-from services.get_spread import player, results
+from services.get_player_data import *
+from services.get_games_data import *
 
 class Commands(commands.Cog):
 
@@ -12,10 +13,9 @@ class Commands(commands.Cog):
         """My Player Stats"""
         file = discord.File("static/football.png")
         member = member or ctx.author
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
-        all_player_stats = players.player_stats()
+        get_player_names = player_names()
+        get_player_names = [pname['name'] for pname in get_player_names]
+        all_player_stats = player_stats()
         if member.display_name in player_names:
             player_stats = []
             for row in all_player_stats:
@@ -167,19 +167,18 @@ class Commands(commands.Cog):
     async def teama(self, ctx):
         """Players on Team B"""
         file = discord.File("static/teama.png")
-        result = results()
-        teama = result.teama()
-        date = result.date()
-        scorea = result.scorea()
-        teama = "\n".join(item for item in teama)
+        get_teama = teama()
+        get_date = date()
+        get_scorea = scorea()
+        get_teama = "\n".join(item for item in get_teama)
         # Embed Message
         embed=discord.Embed(
-            title="Date: " + date,
+            title="Date: " + get_date,
             color=discord.Color.green()
         )
-        embed.add_field(name="Team A", value=teama, inline=True)
+        embed.add_field(name="Team A", value=get_teama, inline=True)
         embed.set_thumbnail(url="attachment://teama.png")
-        embed.set_footer(text="Team A Score: "+str(scorea))
+        embed.set_footer(text="Team A Score: "+str(get_scorea))
         print("Posted Team A to discord!")
         try: 
             await ctx.send(file=file, embed=embed)
@@ -190,19 +189,18 @@ class Commands(commands.Cog):
     async def teamb(self, ctx):        
         """Players on Team B"""
         file = discord.File("static/teamb.png")
-        result = results()
-        teamb = result.teamb()
-        scoreb = result.scoreb()
-        date = result.date()
-        teamb = "\n".join(item for item in teamb)
+        get_teamb = teamb()
+        get_scoreb = scoreb()
+        get_date = date()
+        get_teamb = "\n".join(item for item in get_teamb)
         # Embed Message
         embed=discord.Embed(
-            title="Date: " + date,
+            title="Date: " + get_date,
             color=discord.Color.green()
         )
-        embed.add_field(name="Team B", value=teamb, inline=True)
+        embed.add_field(name="Team B", value=get_teamb, inline=True)
         embed.set_thumbnail(url="attachment://teamb.png")
-        embed.set_footer(text="Team B Score: "+str(scoreb))
+        embed.set_footer(text="Team B Score: "+str(get_scoreb))
         print("Posted Team B to discord!")
         try: 
             await ctx.send(file=file, embed=embed)
@@ -213,12 +211,11 @@ class Commands(commands.Cog):
     async def top10(self, ctx):
         """Leaderboard"""
         file = discord.File("static/trophy.png")
-        players = player()
-        leaderboard = players.leaderboard()
-        leaderboard = '\n'.join(str(score) 
+        get_leaderboard = leaderboard()
+        get_leaderboard = '\n'.join(str(score) 
                                 + " | " 
                                 + name for name,score 
-                                        in leaderboard)
+                                        in get_leaderboard)
         #leaderboard = "\n".join(i for i,v in leaderboard)
         #players = player()
         #score = players.leaderboard()

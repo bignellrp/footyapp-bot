@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
-import services.post_spread as post
-from services.get_spread import player, results
+from services.post_player_data import *
+from services.post_games_data import *
+from services.get_player_data import *
+from services.get_games_data import *
 from services.get_even_teams import get_even_teams
 from services.get_date import next_wednesday
 import re
@@ -27,7 +29,7 @@ class AdminCommands(commands.Cog):
     async def wipe(self, ctx):
         """Wipe Tally"""
         try:
-            post.wipe_tally()
+            wipe_tally()
             await ctx.send('Tally wiped!')
         except:
             await ctx.send('Error: Couldnt wipe tally!')
@@ -36,9 +38,8 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def nick(self, ctx, member: discord.Member, nick):
         """Change nickname"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
+        player_names = player_names()
+        player_names = [pname["name"] for pname in player_names]
         try:
             await member.edit(nick=nick)
             await ctx.send(f'Nickname was changed for {member.mention} ')
@@ -53,61 +54,64 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def new(self, ctx, *args):
         """Adds player to db"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
+        player_names = player_names()
+        player_names = [pname["name"] for pname in player_names]
         for new_player in args:
+            if not validate_name(new_player):
+                print(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
+                await ctx.send(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
+                continue
+
             if new_player in player_names:
                 print(f'{new_player} already exists!')
                 await ctx.send(f'{new_player} already exists!')
             else:
-                post.add_new_player(new_player)
+                add_player(new_player)
                 await ctx.send(f'Added new player with a generic score of 77: {new_player}')
 
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def score(self, ctx, *args):
         """Update score (no args for lineup)"""
-        result = results()
-        teama = result.teama()
-        teamb = result.teamb()
-        date = result.date()
-        scorea = result.scorea()
-        scoreb = result.scoreb()
-        teama_colour = result.coloura()
-        teamb_colour = result.colourb()
-        fileA = discord.File("static/"+teama_colour+".png")
-        fileB = discord.File("static/"+teamb_colour+".png")
-        teama = "\n".join(item for item in teama)
-        teamb = "\n".join(item for item in teamb)
-        if scorea != "-":
+        get_teama = teama()
+        get_teamb = teamb()
+        get_date = date()
+        get_scorea = scorea()
+        get_scoreb = scoreb()
+        get_teama_colour = coloura()
+        get_teamb_colour = colourb()
+        fileA = discord.File("static/"+get_teama_colour+".png")
+        fileB = discord.File("static/"+get_teamb_colour+".png")
+        teama = "\n".join(item for item in get_teama)
+        teamb = "\n".join(item for item in get_teamb)
+        if get_scorea != "-":
             print('Score already entered for this week')
             await ctx.send('Score already entered for this week')
         elif not args:
             print('Display this weeks teams')
             # Embed Message A
             embeda=discord.Embed(
-                title="Here were the teams for:"+str(date),
+                title="Here were the teams for:"+str(get_date),
                 url="http://football.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )
             embeda.add_field(name="TeamA (" 
-                            + str(scorea) 
-                            + "):", value=teama, 
+                            + str(get_scorea) 
+                            + "):", value=get_teama, 
                             inline=True)
-            embeda.set_thumbnail(url="attachment://"+teama_colour+".png")
+            embeda.set_thumbnail(url="attachment://"+get_teama_colour+".png")
             embeda.set_footer(text="Use the website above to rerun the saved lineup")
             # Embed Message B
             embedb=discord.Embed(
-                title="Here were the teams for:"+str(date),
+                title="Here were the teams for:"+str(get_date),
                 url="http://football.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )
             embedb.add_field(name="TeamB (" 
-                            + str(scoreb) 
-                            + "):", value=teamb, 
+                            + str(get_scoreb) 
+                            + "):", value=get_teamb, 
                             inline=True)
-            embedb.set_thumbnail(url="attachment://"+teamb_colour+".png")
+            embedb.set_thumbnail(url="attachment://"+get_teamb_colour+".png")
             embedb.set_footer(text="Use the website above to rerun the saved lineup")
             await ctx.send(file=fileA, embed=embeda)
             await ctx.send(file=fileB, embed=embedb)
@@ -122,8 +126,8 @@ class AdminCommands(commands.Cog):
                 await ctx.send("You didnt enter a 1 or 2 digit number in 60 seconds.")
                 return
             else:
-                post.update_scorea(msg.content)
-                print("Team A Score saved!")
+                update_scorea = msg.content
+                print("Team A Score stored!")
                 await ctx.send("Score saved! Please enter the score for TeamB: (1 or 2 digits)")
                 def check(m):
                     match = re.match("(^[0-9]{1,2}$)",m.content)
@@ -135,8 +139,13 @@ class AdminCommands(commands.Cog):
                     await ctx.send("You didnt enter a 1 or 2 digit number in 60 seconds.")
                     return
                 else:
-                    post.update_scoreb(msg.content)
+                    update_scoreb = msg.content
                     print("Team B Score saved!")
+                    score = {
+                      "scoreTeamA": update_scorea,
+                      "scoreTeamB": update_scoreb
+                    }
+                    update_result(score)
                     await ctx.send("Scores saved!")
                     return
         else:
@@ -151,8 +160,13 @@ class AdminCommands(commands.Cog):
             elif match_a == None or match_b == None:
                 await ctx.send('One or more of your scores is not a valid number')
             else:
-                post.update_scorea(args[0])
-                post.update_scoreb(args[1])
+                update_scorea = args[0]
+                update_scoreb = args[1]
+                score = {
+                    "scoreTeamA": update_scorea,
+                    "scoreTeamB": update_scoreb
+                }
+                update_result(score)
                 print("Scores saved!")
                 await ctx.send("Scores saved!")
 
@@ -161,15 +175,13 @@ class AdminCommands(commands.Cog):
     async def teams(self, ctx):
         """Generate teams"""
         file = discord.File("static/football.png")
-        players = player()
-        game_player_tally_with_score = players.game_player_tally_with_score()
-        result = results()
-        scorea = result.scorea()
-        date = result.date()
-        count = players.player_count()
+        game_player_tally_with_score = game_player_tally_with_score()
+        get_scorea = scorea()
+        get_date = date()
+        count = player_count()
         if count > 0:
             print(f'Not enough players!')
-            await ctx.send(f'We still need {count} more players! Type *!play* to find out whos on the list.')
+            await ctx.send(f'We still need {count} more players!')
         elif count < 0:
             print('Too many players!')
             await ctx.send("Too many players!")
@@ -177,16 +189,17 @@ class AdminCommands(commands.Cog):
             print('Running even teams function!')
             team_a,team_b,team_a_total,team_b_total = get_even_teams(
                 game_player_tally_with_score)
-            google_output = []
-            google_output.append((next_wednesday))
-            google_output.append(str("-"))
-            google_output.append(str("-"))
-            google_output.append((team_a_total))
-            google_output.append((team_b_total))
-            google_output.extend((team_a))
-            google_output.extend((team_b))
-            google_output.append(str("teama"))
-            google_output.append(str("teamb"))
+            game_json = {
+                "date": gameday,
+                "teamA": team_a,
+                "teamB": team_b,
+                "scoreTeamA": None,
+                "scoreTeamB": None,
+                "totalTeamA": team_a_total,
+                "totalTeamB": team_b_total,
+                "colourTeamA": "black",
+                "colourTeamB": "white"
+                }
             team_a = "\n".join(item for item in team_a)
             team_b = "\n".join(item for item in team_b)
             # Embed Message
@@ -218,12 +231,12 @@ class AdminCommands(commands.Cog):
                 await ctx.send("You didnt type SAVE in 10 seconds. Run !teams again")
                 return
             else:
-                if date == next_wednesday and scorea == "-":
-                    result = post.update_result(google_output)
+                if get_date == gameday and get_scorea == None:
+                    update_result(game_json)
                     print("Running update function")
                     await ctx.send(f"Teams Saved!")
                 else:
-                    result = post.append_result(google_output)
+                    append_result(game_json)
                     print("Running append function")
                     await ctx.send(f"Teams Saved!")
                 return
