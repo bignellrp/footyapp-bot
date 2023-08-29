@@ -5,29 +5,38 @@ import os
 ##Load the .env file
 load_dotenv()
 
-# Login to the API to get JWT token
-API_USERNAME = os.getenv("API_USERNAME")
-API_PASSWORD = os.getenv("API_PASSWORD")
+####### JWT AUTH #######
+# # Login to the API to get JWT token
+# API_USERNAME = os.getenv("API_USERNAME")
+# API_PASSWORD = os.getenv("API_PASSWORD")
 
-# Url used for login
-login_api_url = "http://localhost:8080/login"
-# Prepare the request data
-login_data = {"username": API_USERNAME, "password": API_PASSWORD}
+# # Url used for login
+# login_api_url = "http://localhost:8080/login"
+# # Prepare the request data
+# login_data = {"username": API_USERNAME, "password": API_PASSWORD}
 
-try:
-    response = requests.post(login_api_url, json=login_data)
-    if response.status_code == 200:
-        # Successful response
-        access_token = response.json()["access_token"]
-        access_headers = {
-            "Authorization": f"Bearer {access_token}"
-        }   
-    else:
-        print(f"Failed to log in. Status code: {response.status_code}")
+# try:
+#     response = requests.post(login_api_url, json=login_data)
+#     if response.status_code == 200:
+#         # Successful response
+#         access_token = response.json()["access_token"]
+#         access_headers = {
+#             "Authorization": f"Bearer {access_token}"
+#         }   
+#     else:
+#         print(f"Failed to log in. Status code: {response.status_code}")
     
-except requests.exceptions.RequestException as e:
-    print("An error occurred:", e)
+# except requests.exceptions.RequestException as e:
+#     print("An error occurred:", e)
+#########################
+#########################
 
+
+# Create auth header
+access_token = os.getenv("API_TOKEN")
+access_headers = {
+             "Authorization": f"Bearer {access_token}"
+         }
 
 # Url used for player data
 player_api_url = "http://localhost:8080/players"

@@ -1,4 +1,5 @@
 from discord.ext import commands
+from bot import bot
 
 class Login(commands.Cog):
 

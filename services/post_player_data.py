@@ -6,18 +6,29 @@ import re
 ##Load the .env file
 load_dotenv()
 
+####### JWT AUTH #######
 # Login to the API to get JWT token
-API_USERNAME = os.getenv("API_USERNAME")
-API_PASSWORD = os.getenv("API_PASSWORD")
+# API_USERNAME = os.getenv("API_USERNAME")
+# API_PASSWORD = os.getenv("API_PASSWORD")
 
-# Url used for login
-login_api_url = "http://localhost:8080/login"
+# # Url used for login
+# login_api_url = "http://localhost:8080/login"
 
-response = requests.post(login_api_url, json={"username": API_USERNAME, "password": API_PASSWORD})
-access_token = response.json()["access_token"]
+# response = requests.post(login_api_url, json={"username": API_USERNAME, "password": API_PASSWORD})
+# access_token = response.json()["access_token"]
+# access_headers = {
+#     "Authorization": f"Bearer {access_token}"
+# }
+
+#########################
+#########################
+
+
+# Create auth header
+access_token = os.getenv("API_TOKEN")
 access_headers = {
-    "Authorization": f"Bearer {access_token}"
-}
+             "Authorization": f"Bearer {access_token}"
+         }
 
 # Url used for games data
 player_api_url = "http://localhost:8080/players"

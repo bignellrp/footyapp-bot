@@ -5,7 +5,7 @@ from services.post_games_data import *
 from services.get_player_data import *
 from services.get_games_data import *
 from services.get_even_teams import get_even_teams
-from services.get_date import next_wednesday
+from services.get_date import gameday
 import re
 import asyncio
 

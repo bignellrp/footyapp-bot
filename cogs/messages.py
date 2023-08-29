@@ -1,12 +1,7 @@
 from discord.ext import commands
 from services.get_player_data import *
 from services.post_player_data import *
-from services.get_oscommand import GITBRANCH, IFBRANCH
-from dotenv import load_dotenv
-import os
-
-##Load our environment variables
-load_dotenv()
+from bot import bot
 
 class Messages(commands.Cog):
 
@@ -15,13 +10,7 @@ class Messages(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        '''If branch is dev then use the dev channel id
-        This prevents the two bots conflicting with each other'''
-        if  IFBRANCH in GITBRANCH:
-            CHANNEL_ID = os.getenv("CHANNEL_ID")
-        else:
-            CHANNEL_ID = os.getenv("CHANNEL_ID_DEV")
-        CHANNEL_ID = int(CHANNEL_ID) #Wasnt matching channel.id as a string
+        CHANNEL_ID = 881540439654670356
         '''If message starts with thumbsup then 
         add the player to the playing list'''
         if message.author == self.bot.user:

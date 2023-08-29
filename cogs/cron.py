@@ -1,13 +1,7 @@
 from discord.ext import commands
 import aiocron
-from services.post_player_data import wipe_tally
-from services.get_oscommand import GITBRANCH, IFBRANCH
-from bot import bot
-from dotenv import load_dotenv
-import os
-
-##Load our environment variables
-load_dotenv()
+#from services.post_player_data import wipe_tally
+from bot import bot, CHANNEL_ID
 
 class Cron(commands.Cog):
 
@@ -17,13 +11,8 @@ class Cron(commands.Cog):
     @aiocron.crontab('00 06 * * SUN')
     @commands.Cog.listener()
     async def cronmsg():
-        if  IFBRANCH in GITBRANCH:
-            CHANNEL_ID = os.getenv("CHANNEL_ID")
-        else:
-            CHANNEL_ID = os.getenv("CHANNEL_ID_DEV")
-        CHANNEL_ID = int(CHANNEL_ID)
-        channel = bot.get_channel(CHANNEL_ID)
-        wipe_tally()
+        channel = bot.get_channel(CHANNEL_ID) #Should not be hardcoded
+        #wipe_tally()
         await channel.send('Whos available to play this week?')
 
 def setup(bot):
