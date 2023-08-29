@@ -48,6 +48,16 @@ def update_tally(available_players):
     else:
         print(f"Failed to update records. Status code: {response.status_code}")
 
+def modify_tally(available_players):
+
+    # Send a PUT request to update all records
+    response = requests.put(player_api_url + '/update_notplaying', json=available_players, headers=access_headers)
+
+    if response.status_code == 200:
+        print("Tally updated successfully")
+    else:
+        print(f"Failed to update records. Status code: {response.status_code}")
+
 def update_player(player,data):
 
     # Send a PUT request to update all records

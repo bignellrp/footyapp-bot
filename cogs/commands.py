@@ -18,17 +18,17 @@ class Commands(commands.Cog):
         all_player_stats = player_stats()
         if member.display_name in player_names:
             player_stats = []
-            for row in all_player_stats:
-                if row[0] == member.display_name:
+            for player in all_player_stats:
+                if player["name"] == member.display_name:
                     player_stats.append((
-                                        row[0],
-                                        int(row[1]),
-                                        int(row[2]),
-                                        int(row[3]),
-                                        int(row[4]),
-                                        int(row[5])
+                                        player["name"],
+                                        player["wins"],
+                                        player["draws"],
+                                        player["losses"],
+                                        player["score"],
+                                        player["winpercent"]
                                         ))
-            ##Build the table
+            ##Build the table for embed
             name = [el[0] for el 
                             in player_stats]
             name = "\n".join(str(item) for item 
@@ -83,8 +83,7 @@ class Commands(commands.Cog):
     async def stats(self, ctx):
         """All Player Stats"""
         file = discord.File("static/football.png")
-        players = player()
-        player_stats = players.player_stats()
+        player_stats = player_stats()
         rows = "\n".join(
                         str(wins) 
                         + " | " 
@@ -134,14 +133,14 @@ class Commands(commands.Cog):
     @commands.command()
     async def matches(self, ctx):
         """Match stats"""
-        res = results()
-        game_stats = res.game_stats()
+        get_game_stats = game_stats()
         rows = "\n".join(str(date) 
                          + " | " 
                          + str(scorea) 
                          + " | " 
                          + str(scoreb) for date,scorea,scoreb 
-                                        in game_stats)
+                                        in get_game_stats)
+        ##Commented below as mobile doesnt support more than one field
         # date = [el[0] for el in game_stats]
         # date = "\n".join(str(item) for item in date)
         # teama = [el[1] for el in game_stats]
@@ -156,6 +155,7 @@ class Commands(commands.Cog):
         )
         embed.add_field(name="Date|TeamA|TeamB", 
                         value=rows, inline=True)
+        ##Commented below as mobile doesnt support more than one field
         #embed.add_field(name="Date", value=date, inline=True)
         #embed.add_field(name="TeamA", value=teama, inline=True)
         #embed.add_field(name="TeamB", value=teamb, inline=True)
@@ -211,24 +211,16 @@ class Commands(commands.Cog):
     async def top10(self, ctx):
         """Leaderboard"""
         file = discord.File("static/trophy.png")
-        get_leaderboard = leaderboard()
-        get_leaderboard = '\n'.join(str(score) 
+        leaderboard = get_leaderboard()
+        leaderboard = '\n'.join(str(score) 
                                 + " | " 
                                 + name for name,score 
-                                        in get_leaderboard)
-        #leaderboard = "\n".join(i for i,v in leaderboard)
-        #players = player()
-        #score = players.leaderboard()
-        #score = "\n".join(str(v) for i,v in score)
+                                        in leaderboard)
         # Embed Message
         embed=discord.Embed(title="Top10:",
                             color=discord.Color.dark_green())
         embed.add_field(name="Score | Player", 
                         value=leaderboard, inline=True)
-        #embed.add_field(name="Player/Score", 
-        #               value=leaderboard, inline=True)
-        #embed.add_field(name="Score", 
-        #               value=score, inline=True)
         embed.set_thumbnail(url="attachment://trophy.png")
         print("Sending top10 to discord")
         await ctx.send(file = file, embed = embed)
@@ -237,8 +229,7 @@ class Commands(commands.Cog):
     async def percent(self, ctx):
         """Win Percentage"""
         file = discord.File("static/percent.png")
-        players = player()
-        leaderboard = players.winpercentage()
+        leaderboard = winpercentage()
         leaderboard = '\n'.join(str(score) 
                                 + " | " 
                                 + name for name,score 
@@ -255,13 +246,12 @@ class Commands(commands.Cog):
     async def play(self, ctx):
         """Playing this week"""
         file = discord.File("static/football.png")
-        players = player()
-        game_player_tally = players.game_player_tally_with_index()
+        game_player_tally = game_player_tally_with_index()
         game_player_tally = "\n".join(str(count) 
                                       + " " 
                                       + value for count,value 
                                                 in game_player_tally)
-        count = players.player_count()
+        count = player_count()
         if count < 10:
             # Embed Message
             embed=discord.Embed(
@@ -279,14 +269,13 @@ class Commands(commands.Cog):
     @commands.command()
     async def allplayers(self, ctx):
         """List all players"""
-        players = player()
-        all_players = players.all_players()
+        all_players = all_players()
         game_player_tally = []
         num = 1
-        for row in all_players:
+        for player in all_players:
             '''Takes in row of all_players 
             and returns tuple of game_players with index'''
-            game_player_tally.append((num,row[0]))
+            game_player_tally.append(num,player["name"])
             num = num+1
         file = discord.File("static/football.png")
         game_player_tally = "\n".join(str(count) 

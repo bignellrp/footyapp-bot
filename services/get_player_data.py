@@ -122,9 +122,26 @@ def game_player_tally():
     response = requests.get(player_api_url + "/" + "game_player_tally", headers=access_headers)
     if response.status_code == 200:
         #Example output:
-        #['Rik', 'Amy', 'Joe', 'Player 15']
+        #['Rik', 'Amy', 'Joe']
         data = response.json()
         game_player_tally = [(player["name"]) for player in data]
+        return game_player_tally
+    else:
+        print(f"Failed to fetch data. Status code: {response.status_code}")
+        print(f'')
+        return []
+
+def game_player_tally_with_index():
+    '''A list of players where playing = True and an added index'''
+    response = requests.get(player_api_url + "/" + "game_player_tally", headers=access_headers)
+    if response.status_code == 200:
+        #Example output:
+        #[(1, 'Cal'), (2, 'Cla')]
+        data = response.json()
+        game_player_tally = [
+            (index + 1, player["name"])
+            for index, player in enumerate(sorted(data, key=lambda x: x["name"]))
+        ]
         return game_player_tally
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")
@@ -135,9 +152,26 @@ def game_player_tally_with_score():
     response = requests.get(player_api_url + "/" + "game_player_tally", headers=access_headers)
     if response.status_code == 200:
         #Example output:
-        #[{'Rik',77},{'Amy',55}]
+        #[('Cal', 77), ('Cla', 77)]
         data = response.json()
         game_player_tally = [(player["name"], player["total"]) for player in data]
+        return game_player_tally
+    else:
+        print(f"Failed to fetch data. Status code: {response.status_code}")
+        print(f'')
+        return []
+
+def game_player_tally_with_score_and_index():
+    '''A list of players where playing = True, their total and an added index'''
+    response = requests.get(player_api_url + "/" + "game_player_tally", headers=access_headers)
+    if response.status_code == 200:
+        #Example output:
+        #[(1, 'Cal', 77), (2, 'Cla', 77)]
+        data = response.json()
+        game_player_tally = [
+            (index + 1, player["name"], player["total"])
+            for index, player in enumerate(sorted(data, key=lambda x: x["name"]))
+        ]
         return game_player_tally
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")
@@ -165,3 +199,6 @@ def game_player_tally_with_score():
 # player_count = player_count()
 # print("Player Count:", player_count)
 # print("Game Player Tally:", game_player_tally)
+
+# game_player_tally_with_score_and_index = game_player_tally_with_score_and_index()
+# print("Game Player Tally:", game_player_tally_with_score_and_index)

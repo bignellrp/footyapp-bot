@@ -245,59 +245,52 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def swap(self, ctx, *args):
         """Swap player"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
-        result = results()
-        teama = result.teama()
-        teamb = result.teamb()
-        scorea = result.scorea()
-        teams = teama + teamb
+        get_player_names = player_names()
+        player_names = [pname["name"] for pname in get_player_names]
+        get_teama = teama()
+        get_teamb = teamb()
+        get_scorea = scorea()
+        teams = get_teama + get_teamb
+        current_player = args[0]
+        new_player = args[1]
         if len(args) != 2:
             print('You must have 2 players!')
             await ctx.send('You must have 2 players!')
-        elif scorea != "-":
+        elif get_scorea != None:
             print('Game has already been played this week!')
             await ctx.send('Game has already been played this week!')
-        elif args[0] not in teams:
-            print(f'{args[0]} is not in the {teams} list!')
-            await ctx.send(f'{args[0]} is not in the team list!')
-        elif args[1] not in player_names:
-            print(f'{args[1]} is not in the player list!')
+        elif current_player not in teams:
+            print(f'{current_player} is not in the teams list!')
+            await ctx.send(f'{current_player} is not in the team list!')
+        elif new_player not in player_names:
+            print(f'{new_player} is not in the player list!')
             await ctx.send(f'{args[1]} is not in the player list!')
-        elif all([args[0] in teama, args[1] in teama]):
-            print(f'{args[0]} and {args[1]} are in Team A: {teama}')
-            await ctx.send(f'{args[0]} and {args[1]} are on the same team!')
-        elif all([args[0] in teamb, args[1] in teamb]):
-            print(f'{args[0]} and {args[1]} are in Team B: {teamb}')
-            await ctx.send(f'{args[0]} and {args[1]} are on the same team!')
-        elif args[1] in teams:
-            '''Using a separate function for swapping players
-            between teams when both players are playing'''
-            post.swap_existing_player(args)
-            await ctx.send(f'{args[0]} swapped with {args[1]}')
-            await ctx.send(f'Run command !lineup for updated teams/scores')
+        elif all([current_player in get_teama, new_player in get_teama]):
+            print(f'{current_player} and {new_player} are in Team A: {teama}')
+            await ctx.send(f'{current_player} and {new_player} are on the same team!')
+        elif all([current_player in get_teamb, new_player in get_teamb]):
+            print(f'{current_player} and {new_player} are in Team B: {teamb}')
+            await ctx.send(f'{current_player} and {new_player} are on the same team!')
         else:
-            post.swap_player(args)
-            await ctx.send(f'{args[0]} swapped with {args[1]}')
+            swap_players(current_player, new_player)
+            await ctx.send(f'{current_player} swapped with {new_player}')
             await ctx.send(f'Run command !lineup for updated teams/scores')
 
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def lineup(self, ctx):
         """Lineup"""
-        result = results()
-        teama = result.teama()
-        teamb = result.teamb()
-        totala = result.totala()
-        totalb = result.totalb()
-        date = result.date()
-        teama_colour = result.coloura()
-        teamb_colour = result.colourb()
-        fileA = discord.File("static/"+teama_colour+".png")
-        fileB = discord.File("static/"+teamb_colour+".png")
-        team_a = "\n".join(item for item in teama)
-        team_b = "\n".join(item for item in teamb)
+        get_teama = teama()
+        get_teamb = teamb()
+        get_totala = totala()
+        get_totalb = totalb()
+        get_date = date()
+        get_teama_colour = coloura()
+        get_teamb_colour = colourb()
+        fileA = discord.File("static/"+get_teama_colour+".png")
+        fileB = discord.File("static/"+get_teamb_colour+".png")
+        get_team_a = "\n".join(item for item in get_teama)
+        get_team_b = "\n".join(item for item in get_teamb)
         # Embed Message A
         embeda=discord.Embed(
             title="Here were the teams for:"+str(date),
@@ -305,85 +298,40 @@ class AdminCommands(commands.Cog):
             color=discord.Color.dark_green()
         )
         embeda.add_field(name="TeamA (" 
-                        + str(totala) 
-                        + "):", value=team_a, 
+                        + str(get_totala) 
+                        + "):", value=get_team_a, 
                         inline=True)
-        embeda.set_thumbnail(url="attachment://"+teama_colour+".png")
+        embeda.set_thumbnail(url="attachment://"+get_teama_colour+".png")
         embeda.set_footer(text="Use the website above to rerun the saved lineup")
         # Embed Message B
         embedb=discord.Embed(
-            title="Here were the teams for:"+str(date),
+            title="Here were the teams for:"+str(get_date),
             url="http://football.richardbignell.co.uk/score",
             color=discord.Color.dark_green()
         )
         embedb.add_field(name="TeamB (" 
-                        + str(totalb) 
-                        + "):", value=team_b, 
+                        + str(get_totalb) 
+                        + "):", value=get_team_b, 
                         inline=True)
-        embedb.set_thumbnail(url="attachment://"+teamb_colour+".png")
+        embedb.set_thumbnail(url="attachment://"+get_teamb_colour+".png")
         embedb.set_footer(text="Use the website above to rerun the saved lineup")
         await ctx.send(file=fileA, embed=embeda)
         await ctx.send(file=fileB, embed=embedb)
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def swap(self, ctx, *args):
-        """Swap player"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
-        result = results()
-        teama = result.teama()
-        teamb = result.teamb()
-        scorea = result.scorea()
-        teams = teama + teamb
-        if len(args) != 2:
-            print('You must have 2 players!')
-            await ctx.send('You must have 2 players!')
-        elif scorea != "-":
-            print('Game has already been played this week!')
-            await ctx.send('Game has already been played this week!')
-        elif args[0] not in teams:
-            print(f'{args[0]} is not in the {teams} list!')
-            await ctx.send(f'{args[0]} is not in the team list!')
-        elif args[1] not in player_names:
-            print(f'{args[1]} is not in the player list!')
-            await ctx.send(f'{args[1]} is not in the player list!')
-        elif all([args[0] in teama, args[1] in teama]):
-            print(f'{args[0]} and {args[1]} are in Team A: {teama}')
-            await ctx.send(f'{args[0]} and {args[1]} are on the same team!')
-        elif all([args[0] in teamb, args[1] in teamb]):
-            print(f'{args[0]} and {args[1]} are in Team B: {teamb}')
-            await ctx.send(f'{args[0]} and {args[1]} are on the same team!')
-        elif args[1] in teams:
-            '''Using a separate function for swapping players
-            between teams when both players are playing'''
-            post.swap_existing_player(args)
-            await ctx.send(f'{args[0]} swapped with {args[1]}')
-        else:
-            post.swap_player(args)
-            await ctx.send(f'{args[0]} swapped with {args[1]}')
-            
-            post.swap_player(args)
-            await ctx.send(f'{args[0]} swapped with {args[1]}')
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
     async def add(self, ctx, *args):
         """Add player(Play)"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
+        get_player_names = player_names()
+        player_names = [pname["name"] for pname in get_player_names]
         for name in args:
             if name in player_names:
-                players = player()
-                count = players.player_count()
+                count = player_count()
                 if count > 0:
                     ##Should this allow lower case?
-                    post.update_playing_status(name) 
+                    update_tally(name)
                     print("Player is in:", name)
-                    players = player()
-                    count = players.player_count()
+                    count = player_count()
                     msg = f'{name} is on the team! There are {count} places remaining'
                     await ctx.send(msg)
                 else:
@@ -397,15 +345,13 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def rem(self, ctx, *args):
         """Remove player(Play)"""
-        players = player()
-        player_names = players.player_names()
-        player_names = [pname[0] for pname in player_names]
+        get_player_names = player_names()
+        player_names = [pname["name"] for pname in get_player_names]
         for name in args:
             if name in player_names:
-                post.modify_playing_status(name)
+                modify_tally(name)
                 print("Player is out:", name)
-                players = player()
-                count = players.player_count()
+                count = player_count()
                 await ctx.send(f'We now have {count} places. Hopefully see you next week {name}')
             else:
                 print(f'{name} doesnt exist!')
@@ -415,15 +361,15 @@ class AdminCommands(commands.Cog):
     @commands.command()
     async def manplay(self, ctx, *args):
         """Manual(All list)"""
+        # Needs converting to a slash command as too complicate to use
         file = discord.File("static/football.png")
-        players = player()
-        game_player_tally = players.game_player_tally_with_score_and_index()
+        game_player_tally = game_player_tally_with_score_and_index()
         args_count = len(args) #Count the args to use in validation
         args = list(map(int, args)) #Convert all args in list to ints
         arg_match = all(i <= 10 for i in args) #True if all args are <= 10
 
         ##If no args added then send playing list so user can choose from list
-        if not args: 
+        if not args:
             await ctx.invoke(self.bot.get_command('play'))
         if args_count != 5:
             await ctx.send('You must enter 5 numbers')
@@ -431,9 +377,8 @@ class AdminCommands(commands.Cog):
             await ctx.send('Number must be 1 - 10')
         else:
             #Get current result data ready to update results
-            result = results()
-            scorea = result.scorea()
-            date = result.date()
+            get_scorea = scorea()
+            get_date = date()
             team_a, team_b, team_a_score, team_b_score = [], [], [], []
             for i, p, s in game_player_tally:
                 if i in args:
@@ -444,16 +389,18 @@ class AdminCommands(commands.Cog):
                     team_b_score.append(s)
             team_a_total = sum(team_a_score)
             team_b_total = sum(team_b_score)
-            # Google Output
-            google_output = []
-            google_output.append((next_wednesday))
-            google_output.append(str("-"))
-            google_output.append(str("-"))
-            google_output.append((team_a_total))
-            google_output.append((team_b_total))
-            google_output.extend((team_a))
-            google_output.extend((team_b))
-            print(google_output)
+
+            game_json = {
+                "date": gameday,
+                "teamA": team_a,
+                "teamB": team_b,
+                "scoreTeamA": None,
+                "scoreTeamB": None,
+                "totalTeamA": team_a_total,
+                "totalTeamB": team_b_total,
+                "colourTeamA": "black",
+                "colourTeamB": "white"
+                }
             team_a = "\n".join(item for item in team_a)
             team_b = "\n".join(item for item in team_b)
             # Embed Message
@@ -479,19 +426,19 @@ class AdminCommands(commands.Cog):
             def check(m):
                 return m.content == "SAVE" and m.channel == ctx.channel
             try:
-                msg = await self.bot.wait_for("message", 
-                                              timeout=10.0, check=check)
+                await self.bot.wait_for("message", 
+                                            timeout=10.0, check=check)
             except asyncio.TimeoutError: 
                 print("Teams command timeout!")
                 await ctx.send("You didnt type SAVE in 10 seconds. Run !man again")
                 return
             else:
-                if date == next_wednesday and scorea == "-":
-                    result = post.update_result(google_output)
+                if get_date == gameday and get_scorea == None:
+                    update_result(game_json)
                     print("Running update function")
                     await ctx.send(f"Teams Saved!")
                 else:
-                    result = post.append_result(google_output)
+                    append_result(game_json)
                     print("Running append function")
                     await ctx.send(f"Teams Saved!")
                 return
@@ -501,14 +448,13 @@ class AdminCommands(commands.Cog):
     async def manall(self, ctx, *args):
         """Manual(Play List)"""
         file = discord.File("static/football.png")
-        players = player()
-        all_players = players.all_players()
+        get_all_players = all_players()
         game_player_tally = []
         num = 1
-        for row in all_players:
+        for player in get_all_players:
             '''Takes in row of all_players 
             and returns list of game_players with index and score'''
-            game_player_tally.append((num,row[0],row[1]))
+            game_player_tally.append((num,player["name"],player["total"]))
             num = num+1
         args_count = len(args) #Count the args to use in validation
         args = list(map(int, args)) #Convert all args in list to ints
@@ -525,9 +471,8 @@ class AdminCommands(commands.Cog):
             await ctx.send('You must enter 10 numbers')
         else:
             #Get current result data ready to update results
-            result = results()
-            scorea = result.scorea()
-            date = result.date()
+            get_scorea = scorea()
+            get_date = date()
             team_a, team_b, team_a_score, team_b_score = [], [], [], []
             for i, p, s in game_player_tally:
                 if i in args[:5]:
@@ -538,16 +483,18 @@ class AdminCommands(commands.Cog):
                     team_b_score.append(s)
             team_a_total = sum(team_a_score)
             team_b_total = sum(team_b_score)
-            # Google Output
-            google_output = []
-            google_output.append((next_wednesday))
-            google_output.append(str("-"))
-            google_output.append(str("-"))
-            google_output.append(int(team_a_total))
-            google_output.append(int(team_b_total))
-            google_output.extend((team_a))
-            google_output.extend((team_b))
-            print(google_output)
+
+            game_json = {
+                "date": gameday,
+                "teamA": team_a,
+                "teamB": team_b,
+                "scoreTeamA": None,
+                "scoreTeamB": None,
+                "totalTeamA": team_a_total,
+                "totalTeamB": team_b_total,
+                "colourTeamA": "black",
+                "colourTeamB": "white"
+                }
             team_a = "\n".join(item for item in team_a)
             team_b = "\n".join(item for item in team_b)
             # Embed Message
@@ -580,12 +527,12 @@ class AdminCommands(commands.Cog):
                 await ctx.send("You didnt type SAVE in 10 seconds. Run !man again")
                 return
             else:
-                if date == next_wednesday and scorea == "-":
-                    result = post.update_result(google_output)
+                if get_date == gameday and get_scorea == None:
+                    update_result(game_json)
                     print("Running update function")
                     await ctx.send(f"Teams Saved!")
                 else:
-                    result = post.append_result(google_output)
+                    append_result(game_json)
                     print("Running append function")
                     await ctx.send(f"Teams Saved!")
                 return

@@ -46,7 +46,7 @@ class Messages(commands.Cog):
             '''If message starts with thumbsdown then 
             remove the player to the playing list'''
             try:
-                remove_tally(message.author.display_name)
+                modify_tally(message.author.display_name)
                 print("Player is out:", message.author.display_name)
                 players = player_count()
                 msg = f'Now we have {players} places left. Hopefully see you next week {message.author.display_name}'
