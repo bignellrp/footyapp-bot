@@ -293,7 +293,7 @@ class AdminCommands(commands.Cog):
         get_team_b = "\n".join(item for item in get_teamb)
         # Embed Message A
         embeda=discord.Embed(
-            title="Here were the teams for:"+str(date),
+            title="Here were the teams for:"+str(get_date),
             url="http://football.richardbignell.co.uk/score",
             color=discord.Color.dark_green()
         )

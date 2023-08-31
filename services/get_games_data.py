@@ -27,9 +27,9 @@ access_token = os.getenv("API_TOKEN")
 access_headers = {
              "Authorization": f"Bearer {access_token}"
          }
-
+api_url = os.getenv("API_URL")
 # Url used for games data
-games_api_url = "http://localhost:8080/games"
+games_api_url = f"{api_url}/games"
 
 def game_stats():
     response = requests.get(games_api_url + "/" + "game_stats", headers=access_headers)
