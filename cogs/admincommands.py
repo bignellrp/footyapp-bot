@@ -38,8 +38,8 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def nick(self, ctx, member: discord.Member, nick):
         """Change nickname"""
-        player_names = player_names()
-        player_names = [pname["name"] for pname in player_names]
+        get_player_names = player_names()
+        player_names = [pname["name"] for pname in get_player_names]
         try:
             await member.edit(nick=nick)
             await ctx.send(f'Nickname was changed for {member.mention} ')
@@ -54,8 +54,8 @@ class AdminCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def new(self, ctx, *args):
         """Adds player to db"""
-        player_names = player_names()
-        player_names = [pname["name"] for pname in player_names]
+        get_player_names = player_names()
+        player_names = [pname["name"] for pname in get_player_names]
         for new_player in args:
             if not validate_name(new_player):
                 print(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
