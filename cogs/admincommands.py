@@ -39,13 +39,13 @@ class AdminCommands(commands.Cog):
     async def nick(self, ctx, member: discord.Member, nick):
         """Change nickname"""
         get_player_names = player_names()
-        player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname["name"] for pname in get_player_names]
         try:
             await member.edit(nick=nick)
             await ctx.send(f'Nickname was changed for {member.mention} ')
         except:
             await ctx.send(f'Error: Theres an issue with that nickname!')
-        if nick in player_names:
+        if nick in use_player_names:
             await ctx.send(f'{member.mention} is in the player list.')
         else:
             await ctx.send(f'*Note* {member.mention} is not in the player list. Use the *new* command to add them.')
@@ -55,14 +55,14 @@ class AdminCommands(commands.Cog):
     async def new(self, ctx, *args):
         """Adds player to db"""
         get_player_names = player_names()
-        player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname["name"] for pname in get_player_names]
         for new_player in args:
             if not validate_name(new_player):
                 print(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
                 await ctx.send(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
                 continue
 
-            if new_player in player_names:
+            if new_player in use_player_names:
                 print(f'{new_player} already exists!')
                 await ctx.send(f'{new_player} already exists!')
             else:
@@ -246,7 +246,7 @@ class AdminCommands(commands.Cog):
     async def swap(self, ctx, *args):
         """Swap player"""
         get_player_names = player_names()
-        player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname["name"] for pname in get_player_names]
         get_teama = teama()
         get_teamb = teamb()
         get_scorea = scorea()
@@ -262,7 +262,7 @@ class AdminCommands(commands.Cog):
         elif current_player not in teams:
             print(f'{current_player} is not in the teams list!')
             await ctx.send(f'{current_player} is not in the team list!')
-        elif new_player not in player_names:
+        elif new_player not in use_player_names:
             print(f'{new_player} is not in the player list!')
             await ctx.send(f'{args[1]} is not in the player list!')
         elif all([current_player in get_teama, new_player in get_teama]):
@@ -323,9 +323,9 @@ class AdminCommands(commands.Cog):
     async def add(self, ctx, *args):
         """Add player(Play)"""
         get_player_names = player_names()
-        player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname["name"] for pname in get_player_names]
         for name in args:
-            if name in player_names:
+            if name in use_player_names:
                 count = player_count()
                 if count > 0:
                     ##Should this allow lower case?
@@ -346,9 +346,9 @@ class AdminCommands(commands.Cog):
     async def rem(self, ctx, *args):
         """Remove player(Play)"""
         get_player_names = player_names()
-        player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname["name"] for pname in get_player_names]
         for name in args:
-            if name in player_names:
+            if name in use_player_names:
                 modify_tally(name)
                 print("Player is out:", name)
                 count = player_count()

@@ -14,9 +14,9 @@ class Commands(commands.Cog):
         file = discord.File("static/football.png")
         member = member or ctx.author
         get_player_names = player_names()
-        get_player_names = [pname['name'] for pname in get_player_names]
+        use_player_names = [pname['name'] for pname in get_player_names]
         all_player_stats = player_stats()
-        if member.display_name in player_names:
+        if member.display_name in use_player_names:
             player_stats = []
             for player in all_player_stats:
                 if player["name"] == member.display_name:
@@ -269,10 +269,10 @@ class Commands(commands.Cog):
     @commands.command()
     async def allplayers(self, ctx):
         """List all players"""
-        all_players = all_players()
+        get_all_players = all_players()
         game_player_tally = []
         num = 1
-        for player in all_players:
+        for player in get_all_players:
             '''Takes in row of all_players 
             and returns tuple of game_players with index'''
             game_player_tally.append(num,player["name"])
