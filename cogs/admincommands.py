@@ -55,7 +55,7 @@ class AdminCommands(commands.Cog):
     async def new(self, ctx, *args):
         """Adds player to db"""
         get_player_names = player_names()
-        use_player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         for new_player in args:
             if not validate_name(new_player):
                 print(f'Invalid name: {new_player}. The name must be one word, no spaces, no special characters, and max 15 chars.')
