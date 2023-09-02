@@ -3,6 +3,9 @@ import discord.ext.commands as commands
 from dotenv import load_dotenv
 from services.get_oscommand import IFBRANCH, GITBRANCH
 import os
+# import logging
+
+# logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()  # Load environment variables from .env
 

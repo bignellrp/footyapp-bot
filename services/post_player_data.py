@@ -94,7 +94,7 @@ def add_player(name):
         "winpercent": 0
     }
 
-    response = requests.post(player_api_url, json=new_player)
+    response = requests.post(player_api_url, json=new_player, headers=access_headers)
 
     if response.status_code == 200:
         response_data = response.json()

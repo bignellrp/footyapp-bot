@@ -14,19 +14,19 @@ class Commands(commands.Cog):
         file = discord.File("static/football.png")
         member = member or ctx.author
         get_player_names = player_names()
-        use_player_names = [pname['name'] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         all_player_stats = player_stats()
         if member.display_name in use_player_names:
             player_stats = []
             for player in all_player_stats:
-                if player["name"] == member.display_name:
+                if player[0] == member.display_name:
                     player_stats.append((
-                                        player["name"],
-                                        player["wins"],
-                                        player["draws"],
-                                        player["losses"],
-                                        player["score"],
-                                        player["winpercent"]
+                                        player[0],
+                                        player[1],
+                                        player[2],
+                                        player[3],
+                                        player[4],
+                                        player[5]
                                         ))
             ##Build the table for embed
             name = [el[0] for el 
@@ -275,7 +275,7 @@ class Commands(commands.Cog):
         for player in get_all_players:
             '''Takes in row of all_players 
             and returns tuple of game_players with index'''
-            game_player_tally.append(num,player["name"])
+            game_player_tally.append(num,player[0])
             num = num+1
         file = discord.File("static/football.png")
         game_player_tally = "\n".join(str(count) 

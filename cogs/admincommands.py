@@ -39,7 +39,7 @@ class AdminCommands(commands.Cog):
     async def nick(self, ctx, member: discord.Member, nick):
         """Change nickname"""
         get_player_names = player_names()
-        use_player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         try:
             await member.edit(nick=nick)
             await ctx.send(f'Nickname was changed for {member.mention} ')
@@ -246,7 +246,7 @@ class AdminCommands(commands.Cog):
     async def swap(self, ctx, *args):
         """Swap player"""
         get_player_names = player_names()
-        use_player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         get_teama = teama()
         get_teamb = teamb()
         get_scorea = scorea()
@@ -323,7 +323,7 @@ class AdminCommands(commands.Cog):
     async def add(self, ctx, *args):
         """Add player(Play)"""
         get_player_names = player_names()
-        use_player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         for name in args:
             if name in use_player_names:
                 count = player_count()
@@ -346,7 +346,7 @@ class AdminCommands(commands.Cog):
     async def rem(self, ctx, *args):
         """Remove player(Play)"""
         get_player_names = player_names()
-        use_player_names = [pname["name"] for pname in get_player_names]
+        use_player_names = [pname[0] for pname in get_player_names]
         for name in args:
             if name in use_player_names:
                 modify_tally(name)
@@ -454,7 +454,7 @@ class AdminCommands(commands.Cog):
         for player in get_all_players:
             '''Takes in row of all_players 
             and returns list of game_players with index and score'''
-            game_player_tally.append((num,player["name"],player["total"]))
+            game_player_tally.append((num,player[0],player[1]))
             num = num+1
         args_count = len(args) #Count the args to use in validation
         args = list(map(int, args)) #Convert all args in list to ints
