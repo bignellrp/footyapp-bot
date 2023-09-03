@@ -1,6 +1,6 @@
 from discord.ext import commands
 import aiocron
-#from services.post_player_data import wipe_tally
+from services.post_player_data import wipe_tally
 from bot import bot, CHANNEL_ID
 
 class Cron(commands.Cog):
@@ -8,11 +8,12 @@ class Cron(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @aiocron.crontab('00 06 * * SUN')
+    @aiocron.crontab('00 09 * * SUN')
     @commands.Cog.listener()
     async def cronmsg():
-        channel = bot.get_channel(CHANNEL_ID) #Should not be hardcoded
-        #wipe_tally()
+        get_channelid = int(CHANNEL_ID) #The chnnelid must be an int
+        channel = bot.get_channel(get_channelid) #Should not be hardcoded
+        wipe_tally()
         await channel.send('Whos available to play this week?')
 
 def setup(bot):
