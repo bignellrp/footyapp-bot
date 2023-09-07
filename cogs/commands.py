@@ -230,17 +230,19 @@ class Commands(commands.Cog):
         """Win Percentage"""
         file = discord.File("static/percent.png")
         leaderboard = winpercentage()
-        leaderboard = '\n'.join(str(score) 
-                                + " | " 
-                                + name for name,score 
-                                        in leaderboard)
-        embed=discord.Embed(title="Win Percentage:",
-                            color=discord.Color.dark_green())
-        embed.add_field(name="Score | Player", 
-                            value=leaderboard, inline=True)
+
+        # Sort the leaderboard by score in descending order
+        leaderboard.sort(key=lambda x: x[1], reverse=True)
+
+        # Take only the top 10 entries
+        leaderboard = leaderboard[:10]
+
+        leaderboard = '\n'.join(str(score) + " | " + name for name, score in leaderboard)
+        embed = discord.Embed(title="Win Percentage:", color=discord.Color.dark_green())
+        embed.add_field(name="Score | Player", value=leaderboard, inline=True)
         embed.set_thumbnail(url="attachment://percent.png")
         print("Sending Win Percentage to discord")
-        await ctx.send(file = file, embed = embed)
+        await ctx.send(file=file, embed=embed)
 
     @commands.command()
     async def play(self, ctx):
