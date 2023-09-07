@@ -104,7 +104,7 @@ def append_result(game_data):
     else:
         print(f"Failed to add record. Status code: {response.status_code}")
 
-def update_score_result(score):
+def update_score_result(date,score):
     '''Update the result of a game that already exists in the database
     based on the score the stats are also updated by the API'''
     # Send a PUT request to update all records
@@ -113,7 +113,6 @@ def update_score_result(score):
     # "scoreTeamA": 5,
     # "scoreTeamB": 4
     # }
-    date = gameday
     response = requests.put(games_api_url + "/updatescore/" + date, json=score, headers=access_headers)
 
     if response.status_code == 200:

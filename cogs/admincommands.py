@@ -145,7 +145,7 @@ class AdminCommands(commands.Cog):
                       "scoreTeamA": update_scorea,
                       "scoreTeamB": update_scoreb
                     }
-                    update_result(score)
+                    update_score_result(get_date,score)
                     await ctx.send("Scores saved!")
                     return
         else:
@@ -166,7 +166,7 @@ class AdminCommands(commands.Cog):
                     "scoreTeamA": update_scorea,
                     "scoreTeamB": update_scoreb
                 }
-                update_result(score)
+                update_score_result(get_date,score)
                 print("Scores saved!")
                 await ctx.send("Scores saved!")
 
