@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   footyapp-bot:
-    image: ghcr.io/bignellrp/footyapp-bot:main
+    image: ghcr.io/bignellrp/footyapp-bot:${BRANCH}
     container_name: footyapp-bot-${BRANCH}
     networks:
       br0:
-        ipv4_address: 192.168.0.228
+        ipv4_address: ${IPV4_ADDRESS}
     ports:
       - "80:80"
     restart: always
     env_file:
-      - /mnt/docker/footyapp-bot/.env
+      - /mnt/docker/footyapp-bot-${BRANCH}/.env
     environment:
       - TZ=Europe/London
 
