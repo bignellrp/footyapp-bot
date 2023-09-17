@@ -13,17 +13,28 @@ jobs:
       - name: Build, Tag and Push Docker Image to GHCR
         uses: GlueOps/github-actions-build-push-containers@v0.1.3
 
-      # - name: Sleep for 10 seconds
-      #   run: sleep 10s
-      #   shell: bash
+      - name: Sleep for 10 seconds
+        run: sleep 10s
+        shell: bash
 
-      # - name: Deploy stack to Portainer
-      #   uses: carlrygart/portainer-stack-deploy@v1
-      #   with:
-      #     portainer-host: ${{ secrets.PORTAINER_HOST }}
-      #     username: ${{ secrets.PORTAINER_USERNAME }}
-      #     password: ${{ secrets.PORTAINER_PASSWORD }}
-      #     stack-name: 'footyapp-bot'
-      #     stack-definition: 'docker-compose.yml'
-      #     template-variables: '{"BRANCH": "main"}'
-      #     image: ghcr.io/bignellrp/footyapp-bot:main
+      - name: Set up webhook secret based on branch
+        id: set_secret
+        env:
+          WEBHOOK_SECRET_MAIN: ${{ secrets.WEBHOOK_MAIN }}
+          WEBHOOK_SECRET_DEV: ${{ secrets.WEBHOOK_DEV }}
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "WEBHOOK_SECRET=$WEBHOOK_SECRET_MAIN" >> $GITHUB_ENV
+          else
+            echo "WEBHOOK_SECRET=$WEBHOOK_SECRET_DEV" >> $GITHUB_ENV
+          fi
+
+      - name: Send Rebuild Request to Portainer
+        env:
+          PORTAINER_TOKEN: ${{ secrets.PORTAINER_TOKEN }}
+          WEBHOOK_SECRET: ${{ env.WEBHOOK_SECRET }}
+        run: |
+          curl -X POST \
+                -H "Authorization: Bearer $PORTAINER_TOKEN" \
+                -H "Content-Type: application/json" \
+                $WEBHOOK_SECRET
