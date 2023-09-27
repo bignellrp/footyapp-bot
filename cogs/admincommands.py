@@ -82,8 +82,8 @@ class AdminCommands(commands.Cog):
         get_teamb_colour = colourb()
         fileA = discord.File("static/"+get_teama_colour+".png")
         fileB = discord.File("static/"+get_teamb_colour+".png")
-        teama = "\n".join(item for item in get_teama)
-        teamb = "\n".join(item for item in get_teamb)
+        set_teama = "\n".join(item for item in get_teama)
+        set_teamb = "\n".join(item for item in get_teamb)
         if get_scorea != "-":
             print('Score already entered for this week')
             await ctx.send('Score already entered for this week')
@@ -97,7 +97,7 @@ class AdminCommands(commands.Cog):
             )
             embeda.add_field(name="TeamA (" 
                             + str(get_scorea) 
-                            + "):", value=get_teama, 
+                            + "):", value=set_teama, 
                             inline=True)
             embeda.set_thumbnail(url="attachment://"+get_teama_colour+".png")
             embeda.set_footer(text="Use the website above to rerun the saved lineup")
@@ -109,7 +109,7 @@ class AdminCommands(commands.Cog):
             )
             embedb.add_field(name="TeamB (" 
                             + str(get_scoreb) 
-                            + "):", value=get_teamb, 
+                            + "):", value=set_teamb, 
                             inline=True)
             embedb.set_thumbnail(url="attachment://"+get_teamb_colour+".png")
             embedb.set_footer(text="Use the website above to rerun the saved lineup")
