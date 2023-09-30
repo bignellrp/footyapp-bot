@@ -84,7 +84,7 @@ class AdminCommands(commands.Cog):
         fileB = discord.File("static/"+get_teamb_colour+".png")
         set_teama = "\n".join(item for item in get_teama)
         set_teamb = "\n".join(item for item in get_teamb)
-        if get_scorea != "-":
+        if get_scorea != None:
             print('Score already entered for this week')
             await ctx.send('Score already entered for this week')
         elif not args:
