@@ -165,7 +165,7 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def teama(self, ctx):
-        """Players on Team B"""
+        """Players on Team A"""
         file = discord.File("static/teama.png")
         get_teama = teama()
         get_date = date()
