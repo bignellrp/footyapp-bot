@@ -214,7 +214,7 @@ class Commands(commands.Cog):
         leaderboard = get_leaderboard()
         leaderboard = '\n'.join(str(score) 
                                 + " | " 
-                                + goals
+                                + str(goals)
                                 + " | " 
                                 + name for name,score,goals 
                                         in leaderboard)
