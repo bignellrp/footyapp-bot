@@ -94,9 +94,9 @@ def get_leaderboard():
     response = requests.get(player_api_url + "/" + "leaderboard", headers=access_headers)
     if response.status_code == 200:
         #Example output:
-        #[('Rik', 0), ('Cal', 0), ('Amy', 0), ('Joe', 0)]
+        #[('Rik', 0, 0), ('Cal', 0, 0), ('Amy', 0, 0), ('Joe', 0, 0)]
         data = response.json()
-        data = [(player["name"], player["score"]) for player in data]
+        data = [(player["name"], player["score"], player["goals"]) for player in data]
         return data
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")

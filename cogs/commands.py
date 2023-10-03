@@ -214,12 +214,14 @@ class Commands(commands.Cog):
         leaderboard = get_leaderboard()
         leaderboard = '\n'.join(str(score) 
                                 + " | " 
-                                + name for name,score 
+                                + goals
+                                + " | " 
+                                + name for name,score,goals 
                                         in leaderboard)
         # Embed Message
         embed=discord.Embed(title="Top10:",
                             color=discord.Color.dark_green())
-        embed.add_field(name="Score | Player", 
+        embed.add_field(name="Score | Goals | Player", 
                         value=leaderboard, inline=True)
         embed.set_thumbnail(url="attachment://trophy.png")
         print("Sending top10 to discord")
