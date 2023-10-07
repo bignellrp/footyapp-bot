@@ -5,8 +5,7 @@ services:
     image: ghcr.io/bignellrp/footyapp-bot:${BRANCH}
     container_name: footyapp-bot-${BRANCH}
     networks:
-      br0:
-        ipv4_address: ${IPV4_ADDRESS}
+      - br1
     ports:
       - "80:80"
     restart: always
@@ -16,6 +15,6 @@ services:
       - TZ=Europe/London
 
 networks:
-  br0:
+  br1:
     external: true
-    name: br0
+    name: br1
