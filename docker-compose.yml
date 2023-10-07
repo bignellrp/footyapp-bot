@@ -6,8 +6,6 @@ services:
     container_name: footyapp-bot-${BRANCH}
     networks:
       - br1
-    ports:
-      - "80:80"
     restart: always
     env_file:
       - /mnt/docker/footyapp-bot-${BRANCH}/.env
