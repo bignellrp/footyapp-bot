@@ -91,7 +91,7 @@ class AdminCommands(commands.Cog):
             print('Display this weeks teams')
             # Embed Message A
             embeda=discord.Embed(
-                title="Here were the teams for:"+str(get_date),
+                title="Teams for:"+str(get_date),
                 url="http://football.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )
@@ -103,7 +103,7 @@ class AdminCommands(commands.Cog):
             embeda.set_footer(text="Use the website above to rerun the saved lineup")
             # Embed Message B
             embedb=discord.Embed(
-                title="Here were the teams for:"+str(get_date),
+                title="Teams for:"+str(get_date),
                 url="http://football.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )

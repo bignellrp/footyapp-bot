@@ -91,7 +91,8 @@ def add_player(name):
         "playing": False,
         "played": 0,
         "percent": 0,
-        "winpercent": 0
+        "winpercent": 0,
+        "goals": 0
     }
 
     response = requests.post(player_api_url, json=new_player, headers=access_headers)
