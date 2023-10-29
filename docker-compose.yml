@@ -13,7 +13,7 @@ services:
     env_file:
       - /mnt/docker/footyapp-bot-${BRANCH}/.env
     environment:
-      - TZ=Europe/London
+      - TZ=UTC  # Set the container's timezone to UTC to avoid daylight saving issues
 
 networks:
   br0:
