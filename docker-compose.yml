@@ -5,10 +5,7 @@ services:
     image: ghcr.io/bignellrp/footyapp-bot:${BRANCH}
     container_name: footyapp-bot-${BRANCH}
     networks:
-      br0:
-        ipv4_address: ${IPV4_ADDRESS}
-    ports:
-      - "80:80"
+      - br1
     restart: always
     env_file:
       - /mnt/docker/footyapp-bot-${BRANCH}/.env
@@ -16,6 +13,6 @@ services:
       - TZ=UTC  # Set the container's timezone to UTC to avoid daylight saving issues
 
 networks:
-  br0:
+  br1:
     external: true
-    name: br0
+    name: br1
