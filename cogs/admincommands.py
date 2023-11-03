@@ -92,7 +92,7 @@ class AdminCommands(commands.Cog):
             # Embed Message A
             embeda=discord.Embed(
                 title="Teams for:"+str(get_date),
-                url="http://football.richardbignell.co.uk/score",
+                url="https://footyapp.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )
             embeda.add_field(name="TeamA (" 
@@ -104,7 +104,7 @@ class AdminCommands(commands.Cog):
             # Embed Message B
             embedb=discord.Embed(
                 title="Teams for:"+str(get_date),
-                url="http://football.richardbignell.co.uk/score",
+                url="https://footyapp.richardbignell.co.uk/score",
                 color=discord.Color.dark_green()
             )
             embedb.add_field(name="TeamB (" 
@@ -205,7 +205,7 @@ class AdminCommands(commands.Cog):
             # Embed Message
             embed=discord.Embed(
                 title="Here are the teams:",
-                url="http://football.richardbignell.co.uk",
+                url="https://footyapp.richardbignell.co.uk",
                 color=discord.Color.dark_green()
             )
             embed.add_field(name="TeamA (" 
@@ -294,7 +294,7 @@ class AdminCommands(commands.Cog):
         # Embed Message A
         embeda=discord.Embed(
             title="Here were the teams for:"+str(get_date),
-            url="http://football.richardbignell.co.uk/score",
+            url="https://footyapp.richardbignell.co.uk/score",
             color=discord.Color.dark_green()
         )
         embeda.add_field(name="TeamA (" 
@@ -306,7 +306,7 @@ class AdminCommands(commands.Cog):
         # Embed Message B
         embedb=discord.Embed(
             title="Here were the teams for:"+str(get_date),
-            url="http://football.richardbignell.co.uk/score",
+            url="https://footyapp.richardbignell.co.uk/score",
             color=discord.Color.dark_green()
         )
         embedb.add_field(name="TeamB (" 
@@ -406,7 +406,7 @@ class AdminCommands(commands.Cog):
             # Embed Message
             embed=discord.Embed(
                 title="Here are the teams:",
-                url="http://football.richardbignell.co.uk",
+                url="https://footyapp.richardbignell.co.uk",
                 color=discord.Color.dark_green()
             )
             embed.add_field(name="TeamA (" 
@@ -500,7 +500,7 @@ class AdminCommands(commands.Cog):
             # Embed Message
             embed=discord.Embed(
                 title="Here are the teams:",
-                url="http://football.richardbignell.co.uk",
+                url="https://footyapp.richardbignell.co.uk",
                 color=discord.Color.dark_green()
             )
             embed.add_field(name="TeamA (" 

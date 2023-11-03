@@ -56,7 +56,7 @@ class Commands(commands.Cog):
             ##Embed Message
             embed=discord.Embed(
                 title="Player Stats",
-                url="http://football.richardbignell.co.uk/stats",
+                url="https://footyapp.richardbignell.co.uk/stats",
                 color=discord.Color.green()
             )
             embed.add_field(name="Name:", 
@@ -114,7 +114,7 @@ class Commands(commands.Cog):
         # Embed Message
         embed=discord.Embed(
             title="Player Stats",
-            url="http://football.richardbignell.co.uk/stats",
+            url="https://footyapp.richardbignell.co.uk/stats",
             color=discord.Color.green()
         )
         embed.set_thumbnail(url="attachment://football.png")
@@ -150,7 +150,7 @@ class Commands(commands.Cog):
         # Embed Message
         embed=discord.Embed(
             title="Match Stats",
-            url="http://football.richardbignell.co.uk/stats",
+            url="https://footyapp.richardbignell.co.uk/stats",
             color=discord.Color.green()
         )
         embed.add_field(name="Date|TeamA|TeamB", 
