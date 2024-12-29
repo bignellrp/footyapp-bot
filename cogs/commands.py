@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from services.get_player_data import *
 from services.get_games_data import *
+from services.post_ai import get_ai_response, player_stats, format_stats_for_context
 
 class Commands(commands.Cog):
 
@@ -295,6 +296,17 @@ class Commands(commands.Cog):
                         value=game_player_tally, inline=True)
         embed.set_thumbnail(url="attachment://football.png")
         await ctx.send(file = file, embed = embed)
+
+    @commands.command()
+    async def ai(self, ctx, *, query: str):
+        """Get AI response for a query"""
+        stats = player_stats()
+        if stats:
+            context = format_stats_for_context(stats)
+            ai_response = get_ai_response(query, context)
+            await ctx.send(ai_response)
+        else:
+            await ctx.send("Failed to fetch player stats.")
 
 def setup(bot):
     bot.add_cog(Commands(bot))
