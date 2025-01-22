@@ -121,6 +121,15 @@ def update_score_result(date,score):
     else:
         print(f"Failed to update record. Status code: {response.status_code}")
 
+def remove_all_games():
+    response = requests.delete(games_api_url + "/remove_all", headers=access_headers)
+    if response.status_code == 200:
+        print("Games wiped!")
+        wipe_tally()
+        return "All games have been successfully removed."
+    else:
+        return f"Failed to remove all games. Status code: {response.status_code}"
+
 def swap_players(current_player, new_player):
     '''Swap players in the most recent game and update totals'''
     # Example usage

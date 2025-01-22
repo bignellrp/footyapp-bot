@@ -34,6 +34,44 @@ class AdminCommands(commands.Cog):
         except:
             await ctx.send('Error: Couldnt wipe tally!')
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def remove_all_games(self, ctx):
+        """Remove all games"""
+        await ctx.send("Are you sure you want to remove all games? Type 'y' to confirm or 'n' to cancel.")
+
+        def check(m):
+            return m.author == ctx.author and m.content.lower() in ["y", "n"]
+
+        try:
+            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            if msg.content.lower() == "y":
+                result = remove_all_games()
+                await ctx.send(result)
+            else:
+                await ctx.send("Operation cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("Operation timed out. No games were removed.")
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def reset_players(self, ctx):
+        """Reset all player stats"""
+        await ctx.send("Are you sure you want to reset player stats? Type 'y' to confirm or 'n' to cancel.")
+
+        def check(m):
+            return m.author == ctx.author and m.content.lower() in ["y", "n"]
+
+        try:
+            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            if msg.content.lower() == "y":
+                result = reset_player_stats()
+                await ctx.send(result)
+            else:
+                await ctx.send("Operation cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("Operation timed out. No changes were made.")
+
     @commands.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def nick(self, ctx, member: discord.Member, nick):

@@ -59,6 +59,14 @@ def update_tally(available_players):
     else:
         print(f"Failed to update records. Status code: {response.status_code}")
 
+def reset_player_stats():
+    url = f"{player_api_url}/reset_stats"
+    response = requests.post(url, headers=access_headers)
+    if response.status_code == 200:
+        return "Player stats have been successfully reset."
+    else:
+        return f"Failed to reset player stats. Status code: {response.status_code}"
+
 def modify_tally(available_players):
     
     # Send a PUT request to update all records
