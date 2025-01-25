@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from services.get_player_data import *
 from services.get_games_data import *
-from services.post_ai import get_ai_response, player_stats, format_stats_for_context
+from services.post_ai import get_ai_response
 
 class Commands(commands.Cog):
 
