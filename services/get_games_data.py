@@ -54,6 +54,46 @@ def game_wins(player):
         print(f"Failed to fetch data. Status code: {response.status_code}")
         return []
 
+def game_stats_with_context():
+    response = requests.get(games_api_url, headers=access_headers)
+    if response.status_code == 200:
+        # Example output:
+        # [
+        #     {
+        #         "date": "2023-08-30",
+        #         "teamA": ["Player 1", "Player 2", "Player 3"],
+        #         "teamB": ["Player 4", "Player 5", "Player 6"],
+        #         "scoreTeamA": 30,
+        #         "scoreTeamB": 20,
+        #         "totalTeamA": 100,
+        #         "totalTeamB": 90,
+        #         "colourTeamA": "red",
+        #         "colourTeamB": "blue"
+        #     },
+        #     {
+        #         "date": "2023-08-16",
+        #         "teamA": ["Player 7", "Player 8", "Player 9"],
+        #         "teamB": ["Player 10", "Player 11", "Player 12"],
+        #         "scoreTeamA": 3,
+        #         "scoreTeamB": 2,
+        #         "totalTeamA": 50,
+        #         "totalTeamB": 45,
+        #         "colourTeamA": "green",
+        #         "colourTeamB": "yellow"
+        #     }
+        # ]
+        data = response.json()
+        context = "Game stats:\n"
+        for game in data:
+            context += (f"Date: {game['date']}, Team A: {game['teamA']}, Team B: {game['teamB']}, "
+                        f"Score Team A: {game['scoreTeamA']}, Score Team B: {game['scoreTeamB']}, "
+                        f"Total Team A: {game['totalTeamA']}, Total Team B: {game['totalTeamB']}, "
+                        f"Colour Team A: {game['colourTeamA']}, Colour Team B: {game['colourTeamB']}\n")
+        return context
+    else:
+        print(f"Failed to fetch data. Status code: {response.status_code}")
+        return "Failed to fetch game stats."
+
 def most_recent_game():
     response = requests.get(games_api_url + "/" + "most_recent_game", headers=access_headers)
     if response.status_code == 200:
@@ -84,12 +124,10 @@ def date():
 
 def teama():
     list = most_recent_game()["teamA"]
-    #list = ', '.join(map(str, list))
     return list
 
 def teamb():
     list = most_recent_game()["teamB"]
-    #list = ', '.join(map(str, list))
     return list
 
 def scorea():

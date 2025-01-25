@@ -300,13 +300,15 @@ class Commands(commands.Cog):
     @commands.command()
     async def ai(self, ctx, *, query: str):
         """Get AI response for a query"""
-        stats = player_stats()
-        if stats:
-            context = format_stats_for_context(stats)
+        player_stats_context = player_stats_with_context()
+        game_stats_context = game_stats_with_context()
+
+        if player_stats_context and game_stats_context:
+            context = f"{player_stats_context}\n\n{game_stats_context}"
             ai_response = get_ai_response(query, context)
             await ctx.send(ai_response)
         else:
-            await ctx.send("Failed to fetch player stats.")
+            await ctx.send("Failed to fetch player or game stats.")
 
 def setup(bot):
     bot.add_cog(Commands(bot))

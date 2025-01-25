@@ -18,9 +18,3 @@ def get_ai_response(query, context):
         ai_response = ai_response[:1997] + "..."
 
     return ai_response
-
-def format_stats_for_context(stats):
-    context = "Player stats:\n"
-    for player in stats:
-        context += f"Name: {player[0]}, Wins: {player[1]}, Draws: {player[2]}, Losses: {player[3]}, Score: {player[4]}, Win Percentage: {player[5]}\n"
-    return context

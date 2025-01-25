@@ -56,6 +56,26 @@ def player_names():
         print(f"Failed to fetch data. Status code: {response.status_code}")
         return []
 
+def player_stats_with_context():
+    response = requests.get(player_api_url + "/" + "player_stats", headers=access_headers)
+    if response.status_code == 200:
+        # Example output:
+        # [
+        #     {'name': 'Amy', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
+        #     {'name': 'Cal', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
+        #     {'name': 'Joe', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
+        #     {'name': 'Rik', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0}
+        # ]
+        data = response.json()
+        context = "Player stats:\n"
+        for player in data:
+            context += (f"Name: {player['name']}, Wins: {player['wins']}, Draws: {player['draws']}, "
+                        f"Losses: {player['losses']}, Score: {player['score']}, Win Percentage: {player['winpercent']}\n")
+        return context
+    else:
+        print(f"Failed to fetch data. Status code: {response.status_code}")
+        return "Failed to fetch player stats."
+
 def all_players():
     response = requests.get(player_api_url + "/" + "all_players", headers=access_headers)
     if response.status_code == 200:
