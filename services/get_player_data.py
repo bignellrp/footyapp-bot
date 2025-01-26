@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+import csv
 
 ##Load the .env file
 load_dotenv()
@@ -56,21 +57,47 @@ def player_names():
         print(f"Failed to fetch data. Status code: {response.status_code}")
         return []
 
+def backup_player_stats_to_csv(file_path):
+    data = requests.get(player_api_url, headers=access_headers)
+    if data:
+        with open(file_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            # Write the header
+            writer.writerow(["Name", "Total", "Wins", "Draws", "Losses", "Score", "Playing", "Played", "Percent", "Win Percent"])
+            # Write the data
+            for player in data:
+                writer.writerow([
+                    player["name"],
+                    player["total"],
+                    player["wins"],
+                    player["draws"],
+                    player["losses"],
+                    player["score"],
+                    player["playing"],
+                    player["played"],
+                    player["percent"],
+                    player["winpercent"]
+                ])
+        print(f"Player stats have been successfully backed up to {file_path}")
+    else:
+        print("No data to backup.")
+        return "Failed to backup player stats."
+
 def player_stats_with_context():
-    response = requests.get(player_api_url + "/" + "player_stats", headers=access_headers)
+    response = requests.get(player_api_url, headers=access_headers)
     if response.status_code == 200:
         # Example output:
         # [
-        #     {'name': 'Amy', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
-        #     {'name': 'Cal', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
-        #     {'name': 'Joe', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0},
-        #     {'name': 'Rik', 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'winpercent': 0}
+        #     {'name': 'Amy', 'total': 77, 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'played': 0, 'winpercent': 0},
+        #     {'name': 'Cal', 'total': 77, 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'played': 0, 'winpercent': 0},
+        #     {'name': 'Joe', 'total': 77, 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'played': 0, 'winpercent': 0},
+        #     {'name': 'Rik', 'total': 77, 'wins': 0, 'draws': 0, 'losses': 0, 'score': 0, 'played': 0, 'winpercent': 0}
         # ]
         data = response.json()
         context = "Player stats:\n"
         for player in data:
-            context += (f"Name: {player['name']}, Wins: {player['wins']}, Draws: {player['draws']}, "
-                        f"Losses: {player['losses']}, Score: {player['score']}, Win Percentage: {player['winpercent']}\n")
+            context += (f"Name: {player['name']}, Player Rating Total: {player['total']}, Wins: {player['wins']}, Draws: {player['draws']}, "
+                        f"Losses: {player['losses']}, Score: {player['score']}, Total Games Played: {player['played']}, Win Percentage: {player['winpercent']}\n")
         return context
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")

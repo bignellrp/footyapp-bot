@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+import csv
 
 ##Load the .env file
 load_dotenv()
@@ -93,6 +94,30 @@ def game_stats_with_context():
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")
         return "Failed to fetch game stats."
+
+def backup_game_stats_to_csv(file_path):
+    data = game_stats_with_context()
+    if data:
+        with open(file_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            # Write the header
+            writer.writerow(["Date", "Team A", "Team B", "Score Team A", "Score Team B", "Total Team A", "Total Team B", "Colour Team A", "Colour Team B"])
+            # Write the data
+            for game in data:
+                writer.writerow([
+                    game["date"],
+                    ', '.join(game["teamA"]),
+                    ', '.join(game["teamB"]),
+                    game["scoreTeamA"],
+                    game["scoreTeamB"],
+                    game["totalTeamA"],
+                    game["totalTeamB"],
+                    game["colourTeamA"],
+                    game["colourTeamB"]
+                ])
+        print(f"Game stats have been successfully backed up to {file_path}")
+    else:
+        print("No data to backup.")
 
 def most_recent_game():
     response = requests.get(games_api_url + "/" + "most_recent_game", headers=access_headers)
