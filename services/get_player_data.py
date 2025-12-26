@@ -58,8 +58,9 @@ def player_names():
         return []
 
 def backup_player_stats_to_csv(file_path):
-    data = requests.get(player_api_url, headers=access_headers)
-    if data:
+    response = requests.get(player_api_url, headers=access_headers)
+    if response.status_code == 200:
+        data = response.json()
         with open(file_path, mode='w', newline='') as file:
             writer = csv.writer(file)
             # Write the header
@@ -80,7 +81,7 @@ def backup_player_stats_to_csv(file_path):
                 ])
         print(f"Player stats have been successfully backed up to {file_path}")
     else:
-        print("No data to backup.")
+        print(f"Failed to fetch player data. Status code: {response.status_code}")
         return "Failed to backup player stats."
 
 def player_stats_with_context():
