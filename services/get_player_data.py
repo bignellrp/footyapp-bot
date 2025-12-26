@@ -173,7 +173,7 @@ def player_count():
     else:
         print(f"Failed to fetch data. Status code: {response.status_code}")
         print(f'')
-        return []
+        return 0
 
 def game_player_tally():
     response = requests.get(player_api_url + "/" + "game_player_tally", headers=access_headers)
