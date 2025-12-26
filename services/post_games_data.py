@@ -122,7 +122,7 @@ def update_score_result(date,score):
         print(f"Failed to update record. Status code: {response.status_code}")
 
 def remove_all_games():
-    response = requests.delete(games_api_url + "/remove_all", headers=access_headers)
+    response = requests.delete(games_api_url, headers=access_headers)
     if response.status_code == 200:
         print("Games wiped!")
         wipe_tally()

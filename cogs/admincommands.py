@@ -434,7 +434,7 @@ class AdminCommands(commands.Cog):
                 count = player_count()
                 if count > 0:
                     ##Should this allow lower case?
-                    update_tally(name)
+                    update_tally([name])
                     print("Player is in:", name)
                     count = player_count()
                     msg = f'{name} is on the team! There are {count} places remaining'
@@ -454,7 +454,7 @@ class AdminCommands(commands.Cog):
         use_player_names = [pname[0] for pname in get_player_names]
         for name in args:
             if name in use_player_names:
-                modify_tally(name)
+                modify_tally([name])
                 print("Player is out:", name)
                 count = player_count()
                 await ctx.send(f'We now have {count} places. Hopefully see you next week {name}')
