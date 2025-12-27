@@ -100,17 +100,17 @@ class Commands(commands.Cog):
                         for name,wins,draws,losses,total,percent 
                             in all_player_stats)
         ##Commented below as mobile doesnt support more than one field
-        # name = [el[0] for el in player_stats]
+        # name = [el[0] for el in all_player_stats]
         # name = "\n".join(str(item) for item in name)
-        # wins = [el[1] for el in player_stats]
+        # wins = [el[1] for el in all_player_stats]
         # wins = "\n".join(str(item) for item in wins)
-        # draws = [el[2] for el in player_stats]
+        # draws = [el[2] for el in all_player_stats]
         # draws = "\n".join(str(item) for item in draws)
-        # losses = [el[3] for el in player_stats]
+        # losses = [el[3] for el in all_player_stats]
         # losses = "\n".join(str(item) for item in losses)
-        # total = [el[4] for el in player_stats]
+        # total = [el[4] for el in all_player_stats]
         # total = "\n".join(str(item) for item in total)
-        # percent = [el[5] for el in player_stats]
+        # percent = [el[5] for el in all_player_stats]
         # percent = "\n".join(str(item) for item in percent)
         # Embed Message
         embed=discord.Embed(
