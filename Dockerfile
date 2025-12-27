@@ -1,5 +1,5 @@
-# Use the official Python 3.9 image
-FROM python:3.9
+# Use the official Python 3.9 image with latest security updates
+FROM python:3.9-slim
 
 # Set the working directory
 WORKDIR /app

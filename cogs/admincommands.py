@@ -8,6 +8,7 @@ from services.get_even_teams import get_even_teams
 from services.get_date import gameday
 import re
 import asyncio
+import os
 
 class AdminCommands(commands.Cog):
 
@@ -33,6 +34,110 @@ class AdminCommands(commands.Cog):
             await ctx.send('Tally wiped!')
         except:
             await ctx.send('Error: Couldnt wipe tally!')
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def remove_all_games(self, ctx):
+        """Remove all games"""
+        await ctx.send("Are you sure you want to remove all games? Type 'y' to confirm or 'n' to cancel.")
+
+        def check(m):
+            return m.author == ctx.author and m.content.lower() in ["y", "n"]
+
+        try:
+            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            if msg.content.lower() == "y":
+                # Backup game stats to CSV
+                backup_file_path = "game_stats_backup.csv"
+                backup_game_stats_to_csv(backup_file_path)
+
+                # Send the CSV file to Discord
+                await ctx.send(file=discord.File(backup_file_path))
+
+                # Remove all games
+                result = remove_all_games()
+                await ctx.send(result)
+
+                # Delete the CSV file after sending
+                os.remove(backup_file_path)
+            else:
+                await ctx.send("Operation cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("Operation timed out. No games were removed.")
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def reset_players(self, ctx):
+        """Reset all player stats"""
+        await ctx.send("Are you sure you want to reset player stats? Type 'y' to confirm or 'n' to cancel.")
+
+        def check(m):
+            return m.author == ctx.author and m.content.lower() in ["y", "n"]
+
+        try:
+            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            if msg.content.lower() == "y":
+                # Backup player stats to CSV
+                backup_file_path = "player_stats_backup.csv"
+                backup_player_stats_to_csv(backup_file_path)
+
+                # Send the CSV file to Discord
+                await ctx.send(file=discord.File(backup_file_path))
+
+                # Reset player stats
+                result = reset_player_stats()
+                await ctx.send(result)
+
+                # Delete the CSV file after sending
+                os.remove(backup_file_path)
+            else:
+                await ctx.send("Operation cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("Operation timed out. No changes were made.")
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def totalreset(self, ctx):
+        """Reset all player stats and remove all games"""
+        await ctx.send("Are you sure you want to reset player stats and remove all games? Type 'y' to confirm or 'n' to cancel.")
+
+        def check(m):
+            return m.author == ctx.author and m.content.lower() in ["y", "n"]
+
+        try:
+            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            if msg.content.lower() == "y":
+                # Backup player stats to CSV
+                player_backup_file_path = "player_stats_backup.csv"
+                backup_player_stats_to_csv(player_backup_file_path)
+
+                # Send the player CSV file to Discord
+                await ctx.send(file=discord.File(player_backup_file_path))
+
+                # Reset player stats
+                player_result = reset_player_stats()
+                await ctx.send(player_result)
+
+                # Delete the player CSV file after sending
+                os.remove(player_backup_file_path)
+
+                # Backup game stats to CSV
+                game_backup_file_path = "game_stats_backup.csv"
+                backup_game_stats_to_csv(game_backup_file_path)
+
+                # Send the game CSV file to Discord
+                await ctx.send(file=discord.File(game_backup_file_path))
+
+                # Remove all games
+                game_result = remove_all_games()
+                await ctx.send(game_result)
+
+                # Delete the game CSV file after sending
+                os.remove(game_backup_file_path)
+            else:
+                await ctx.send("Operation cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("Operation timed out. No changes were made.")
 
     @commands.command(pass_context=True)
     @commands.has_permissions(administrator=True)
@@ -329,7 +434,7 @@ class AdminCommands(commands.Cog):
                 count = player_count()
                 if count > 0:
                     ##Should this allow lower case?
-                    update_tally(name)
+                    update_tally([name])
                     print("Player is in:", name)
                     count = player_count()
                     msg = f'{name} is on the team! There are {count} places remaining'
@@ -349,7 +454,7 @@ class AdminCommands(commands.Cog):
         use_player_names = [pname[0] for pname in get_player_names]
         for name in args:
             if name in use_player_names:
-                modify_tally(name)
+                modify_tally([name])
                 print("Player is out:", name)
                 count = player_count()
                 await ctx.send(f'We now have {count} places. Hopefully see you next week {name}')
