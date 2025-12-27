@@ -84,7 +84,7 @@ class Commands(commands.Cog):
     async def stats(self, ctx):
         """All Player Stats"""
         file = discord.File("static/football.png")
-        player_stats = player_stats()
+        all_player_stats = player_stats()
         rows = "\n".join(
                         str(wins) 
                         + " | " 
@@ -98,7 +98,7 @@ class Commands(commands.Cog):
                         + " | "
                         + name
                         for name,wins,draws,losses,total,percent 
-                            in player_stats)
+                            in all_player_stats)
         ##Commented below as mobile doesnt support more than one field
         # name = [el[0] for el in player_stats]
         # name = "\n".join(str(item) for item in name)
