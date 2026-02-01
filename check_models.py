@@ -5,14 +5,24 @@ Run this to see what models you can actually use
 """
 
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 import os
 
-load_dotenv()
-GOOGLE_TOKEN = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_TOKEN)
+def main() -> None:
+    load_dotenv()
+    google_token = os.getenv("GOOGLE_API_KEY")
 
-print("Available models:")
-for model in genai.list_models():
-    if 'generateContent' in model.supported_generation_methods:
-        print(f"- {model.name}")
+    if not google_token:
+        raise RuntimeError("Missing GOOGLE_API_KEY environment variable")
+
+    client = genai.Client(api_key=google_token)
+
+    print("Available models:")
+    for model in client.models.list():
+        actions = getattr(model, "supported_actions", None) or []
+        if any(a.lower() in {"generatecontent", "generate_content"} for a in actions):
+            print(f"- {model.name}")
+
+
+if __name__ == "__main__":
+    main()
