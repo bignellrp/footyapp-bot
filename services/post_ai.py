@@ -55,6 +55,36 @@ def _candidate_model_names(model: str):
     return [model, f"models/{model}"]
 
 
+def _extract_text(response) -> str:
+    """Best-effort extraction of text from google-genai responses.
+
+    Avoids leaking the raw response object into Discord messages.
+    """
+
+    text = (getattr(response, "text", None) or "").strip()
+    if text:
+        return text
+
+    candidates = getattr(response, "candidates", None) or []
+    for candidate in candidates:
+        content = getattr(candidate, "content", None)
+        parts = getattr(content, "parts", None) or []
+        for part in parts:
+            part_text = (getattr(part, "text", None) or "").strip()
+            if part_text:
+                return part_text
+
+    return ""
+
+
+def _finish_reason(response) -> str:
+    candidates = getattr(response, "candidates", None) or []
+    if not candidates:
+        return ""
+    reason = getattr(candidates[0], "finish_reason", None)
+    return str(reason) if reason is not None else ""
+
+
 async def _enforce_rate_limit():
     """Global per-process RPM limiter.
 
@@ -147,11 +177,22 @@ async def get_ai_response(query, context):
             "gemini-pro",
         ]
 
-        max_output_tokens = int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "256"))
+        # Default higher than before to avoid clipped sentences; still modest for free tier.
+        max_output_tokens = int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "512"))
+        # If the user explicitly asks for a one-word answer, cap output aggressively.
+        if isinstance(query, str) and "one word" in query.lower():
+            max_output_tokens = min(max_output_tokens, 16)
+
         temperature = float(os.getenv("GEMINI_TEMPERATURE", "0.2"))
+        # Disable thinking by default; it can consume budget and lead to MAX_TOKENS with empty text.
+        thinking_budget = int(os.getenv("GEMINI_THINKING_BUDGET", "0"))
         config = {
             "max_output_tokens": max_output_tokens,
             "temperature": temperature,
+            "thinking_config": {
+                "include_thoughts": False,
+                "thinking_budget": thinking_budget,
+            },
         }
 
         await _enforce_rate_limit()
@@ -168,9 +209,31 @@ async def get_ai_response(query, context):
                         config=config,
                     )
 
-                    ai_response = (getattr(response, "text", None) or "").strip() or None
-                    if ai_response is None:
-                        ai_response = str(response)
+                    ai_response = _extract_text(response) or None
+
+                    # If we got no text (or it's clearly clipped), optionally retry once with a
+                    # slightly higher output budget.
+                    reason = _finish_reason(response)
+                    clipped = False
+                    if ai_response:
+                        # Heuristic: common clipping is mid-sentence without punctuation.
+                        clipped = reason.endswith("MAX_TOKENS") and not ai_response.endswith((".", "!", "?", "\n"))
+
+                    if (ai_response is None or clipped) and reason.endswith("MAX_TOKENS"):
+                        retry_max = int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS_RETRY", "768"))
+                        if retry_max > max_output_tokens:
+                            retry_config = dict(config)
+                            retry_config["max_output_tokens"] = retry_max
+                            retry_response = await asyncio.to_thread(
+                                client.models.generate_content,
+                                model=candidate,
+                                contents=prompt,
+                                config=retry_config,
+                            )
+                            retry_text = _extract_text(retry_response).strip()
+                            if retry_text:
+                                ai_response = retry_text
+
                     break
                 except Exception as exc:
                     last_error = exc
