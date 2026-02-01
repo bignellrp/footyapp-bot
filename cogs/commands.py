@@ -365,7 +365,7 @@ class Commands(commands.Cog):
 
         if player_stats_context and game_stats_context:
             context = f"{player_stats_context}\n\n{game_stats_context}"
-            ai_response = get_ai_response(query, context)
+            ai_response = await get_ai_response(query, context)
             await ctx.send(ai_response)
         else:
             await ctx.send("Failed to fetch player or game stats.")
