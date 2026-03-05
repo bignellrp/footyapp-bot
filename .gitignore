@@ -60,3 +60,4 @@ Thumbs.db
 
 # Backup files
 *.csv
+test_portainer_update.py
