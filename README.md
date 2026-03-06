@@ -89,3 +89,4 @@ Notes:
 - The AI command is designed to answer **only** based on the bot’s football stats context.
 - If you ask unrelated questions, it should refuse and ask you to keep it football/stats related.
 
+
